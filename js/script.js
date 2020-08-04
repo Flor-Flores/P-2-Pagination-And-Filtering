@@ -3,21 +3,21 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-const studentList = document.querySelectorAll('.student-item');
+const studentList = document.querySelectorAll('.student-item'); 
 const pageLength = 10;
 
-
+//programatically calculates the startIndex and endIndex via page parameter (global variable pageLength).
+      // toggles visibility to show the list items in the start/endIndex range.
 const showPage = (list, page) => {
-   const startIndex = (page * pageLength)-pageLength;
-   const endIndex = page * pageLength;
-
-   for(let i = 0; i < list.length; i++){
-      let listItem = list[i];
-      listItem.style.display = 'none';
-      if (i >= startIndex && i < endIndex){
-         listItem.style.display = 'block';
+      const startIndex = (page * pageLength) - pageLength;
+      const endIndex = page * pageLength;
+      for(let i = 0; i < list.length; i++){
+         let listItem = list[i];
+         listItem.style.display = 'none';
+         if (i >= startIndex && i < endIndex){
+            listItem.style.display = 'block';
+         }
       }
-   }
    }
 
 /*** 
@@ -25,28 +25,17 @@ const showPage = (list, page) => {
    functionality to the pagination buttons.
 ***/
 const appendPageLinks = (list) => {
-   /*
-   1. Determine how many pages are needed for the list by dividing the
-   total number of list items by the max number of items per page
-   2. Create a div, give it the “pagination” class, and append it to the .page div
-   3. Add a ul to the “pagination” div to store the pagination links
-   4. for every page, add li and a tags with the page number text
-   
-   5. Add an event listener to each a tag. When they are clicked
-   call the showPage function to display the appropriate page
-   6. Loop over pagination links to remove active class from all links
-   7. Add the active class to the link that was just clicked. You can identify that
-   clicked link using event.target
-   */
-   const totalPages = Math.ceil(list.length /pageLength);  //Determine pagination length 
+
+   const totalPages = Math.ceil(list.length /pageLength);  //Determine pagination length via global variable
    const pageDiv = document.querySelector('.page');
    const pagination = document.createElement('div');
    const ul = document.createElement('ul');
 
+// create page navigation list items
    pageDiv.appendChild(pagination);
    pagination.classList.add('pagination');
    pagination.appendChild(ul);
-
+// add page numbers and other properties to list items
    for (let i = 0; i < totalPages; i++){   
       const li = document.createElement('li');
       const a = document.createElement('a');
@@ -55,29 +44,30 @@ const appendPageLinks = (list) => {
       a.id = i +1 ; // +1 starts the list with 1 instead of 0
       a.href = `#`;
       ul.appendChild(li);
-
    }
 
    const navLis = document.querySelectorAll('li a');     
-   navLis[0].classList.add('active');     //add the active class to the first page
+   navLis[0].classList.add('active');     //add the active class to the first page to denote that we are on that page.
    for(let i = 0; i < navLis.length; i++){
 
       navLis[i].addEventListener("click", function(){
          const activeLink = document.querySelector(".active");
-         if(activeLink){activeLink.className = "null";}
+         if(activeLink){activeLink.className = " ";} // if there was an active link it removes that class --- is there a better method ? if I pass an empty string, then I have loose class tags, so I added a whites space...
          const activePageIndex = this.id ;
          this.className ='active';
-         showPage(studentList, activePageIndex)
-         
-
+         showPage(studentList, activePageIndex);
          });
    }
    }
 
-
    showPage(studentList, 1);
    appendPageLinks(studentList);
    
+
+/******************************************
+               exceeds 
+******************************************/
+
    
 //Use unobtrusive JavaScript to append HTML for a search bar.
 const pageHeader = document.querySelector('.page-header');
@@ -92,21 +82,19 @@ const searchButton = document.createElement('button');
 pageHeader.appendChild(searchBarDiv);
 searchBarDiv.appendChild(searchBarField);
 searchBarDiv.appendChild( searchButton);
-// searchBarField.appendChild(searchButton);
-
-// console.log(mySearch);
 
 searchButton.addEventListener("click", function(){
-   const mySearch = searchBarField.value.toUpperCase();
+   const mySearch = searchBarField.value.toLowerCase();
    const oldPagination = document.querySelector('.pagination');
-   if(oldPagination){oldPagination.remove()}
+   if(oldPagination){oldPagination.remove()} // if there is a new search it removes the old pagination
+   const newSearch = document.querySelector(".noSearchResults")
+   if(newSearch){newSearch.remove()}// if there is a new search after a search that yielded no results it removes that message.
 
-   alert(mySearch);
-   const mySearchArray = [];
-
+   const mySearchArray = []; // empty arr for the search form field
+//loop through list items if mySearch === to a name it pushes it to mySearchArray
    for (let i = 0; i < studentList.length; i++) {
       const element = studentList[i];
-      const studentName = element.querySelector('h3').innerText.toUpperCase();
+      const studentName = element.querySelector('h3').innerText.toLowerCase();
       if(studentName.includes(mySearch)){
          element.style.display = 'block';
          mySearchArray.push(element);
@@ -116,41 +104,28 @@ searchButton.addEventListener("click", function(){
       
    }
    showPage(mySearchArray, 1);
+   //enter mySearchArray as a parameter to the showPage function. 
+      // if there are not results print a message
+      // if mySearchArray is longer that the pageLength, run the appendPageLinks function.
+   // clear the searchBarField 
 
    if(mySearchArray.length <= 0){
-      const oldAlert = document.querySelector(".myAlert")
-      if(oldAlert){oldAlert.remove()}
-      const myAlert = document.createElement('div');
-         myAlert.classList.add('myAlert')
-      document.querySelector('ul').appendChild(myAlert);
-      myAlert.innerText = "Sorry, no students found with that name";
+      const noSearchResults = document.createElement('div');
+      noSearchResults.classList.add('noSearchResults')
+      document.querySelector('ul').appendChild(noSearchResults);
+      noSearchResults.innerText = "Sorry, no students found with that name";
    }else if(mySearchArray.length > pageLength){
       appendPageLinks(mySearchArray);
-
    }
-   
-   // mySearch = ' ';
+   searchBarField.value = '';
 
 });
 
 
 
-
-
-
-// ToDo:   clear search bar, and no results message if there is one. ; 
-
-
-
-
-
-
-
-
-
-
-
-
+//Future to do?? 
+// only show one if there are duplicate entries on the search.
+//refactor creation of elements using this function?
 
 //https://kyleshevlin.com/how-to-write-your-own-javascript-dom-element-factory
 
