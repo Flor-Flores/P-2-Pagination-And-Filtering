@@ -55,7 +55,7 @@ const appendPageLinks = (list) => {
          if(activeLink){activeLink.className = " ";} // if there was an active link it removes that class --- is there a better method ? if I pass an empty string, then I have loose class tags, so I added a whites space...
          const activePageIndex = this.id ;
          this.className ='active';
-         showPage(studentList, activePageIndex);
+         showPage(list, activePageIndex);
          });
    }
    }
